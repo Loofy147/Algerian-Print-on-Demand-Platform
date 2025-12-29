@@ -16,8 +16,12 @@ BASE_OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'datasets', 'raw
 CATEGORIES = {
     "geometric": "Islamic geometric patterns",
     "calligraphy": "Arabic calligraphy",
-    # Add other categories here
+    "berber": "Berber symbols",
+    "cultural": "Algerian cultural art",
+    "sports": "Algerian sports fan art",
+    "modern": "Modern North African design"
 }
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 WIKIMEDIA_API_URL = "https://commons.wikimedia.org/w/api.php"
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -63,7 +67,11 @@ def fetch_wikimedia_image_urls(search_query, limit=50):
             print("No images found for this search query.")
             return []
 
-        title_string = "|".join([page['title'] for page in pages])
+        title_string = "|".join([page['title'] for page in pages if os.path.splitext(page['title'])[1].lower() in ALLOWED_EXTENSIONS])
+
+        if not title_string:
+            print("No valid image files found in the search results.")
+            return []
 
         params_for_urls = {
             "action": "query",
@@ -94,35 +102,37 @@ def fetch_wikimedia_image_urls(search_query, limit=50):
 
 def main():
     """
-    Main function to run the dataset collection process.
+    Main function to run the dataset collection process for all categories.
     """
-    print("Starting dataset collection...")
+    print("Starting dataset collection for all categories (test run)...")
 
-    category_key = "geometric"
-    search_query = CATEGORIES[category_key]
+    for category_key, search_query in CATEGORIES.items():
+        print(f"\n--- Processing category: {category_key.upper()} ---")
 
-    output_dir = os.path.join(BASE_OUTPUT_DIR, category_key)
-    os.makedirs(output_dir, exist_ok=True)
+        output_dir = os.path.join(BASE_OUTPUT_DIR, category_key)
+        os.makedirs(output_dir, exist_ok=True)
 
-    image_urls = fetch_wikimedia_image_urls(search_query, limit=20)
+        image_urls = fetch_wikimedia_image_urls(search_query, limit=5)
 
-    if not image_urls:
-        print("No image URLs fetched. Exiting.")
-        return
+        if not image_urls:
+            print(f"No image URLs fetched for '{search_query}'. Skipping.")
+            continue
 
-    print(f"\nDownloading a test batch of {len(image_urls)} images to '{output_dir}'...")
+        print(f"\nDownloading a test batch of up to {len(image_urls)} images to '{output_dir}'...")
 
-    success_count = 0
-    for i, url in enumerate(image_urls):
-        filename = os.path.basename(url)
-        destination = os.path.join(output_dir, filename)
+        success_count = 0
+        for url in image_urls:
+            filename = os.path.basename(url)
+            destination = os.path.join(output_dir, filename)
 
-        if download_image(url, destination):
-            success_count += 1
+            if download_image(url, destination):
+                success_count += 1
 
-        time.sleep(1.5)
+            time.sleep(1.5)
 
-    print(f"\nDataset collection complete. Successfully downloaded {success_count}/{len(image_urls)} images.")
+        print(f"Category '{category_key}' complete. Successfully downloaded {success_count}/{len(image_urls)} valid images.")
+
+    print("\nFull dataset collection test run complete.")
 
 if __name__ == "__main__":
     main()
