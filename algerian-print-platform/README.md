@@ -38,186 +38,77 @@ algerian-print-platform/
 │   ├── app/
 │   │   ├── api/            # API endpoints
 │   │   ├── core/           # Config, security
+│   │   ├── crud/           # Database operations
+│   │   ├── db/             # Database session
 │   │   ├── models/         # Database models
-│   │   ├── services/       # Business logic
-│   │   └── ml/             # ML inference
+│   │   ├── schemas/        # Pydantic schemas
+│   │   └── main.py
+│   ├── alembic/            # Database migrations
 │   ├── tests/
 │   └── requirements.txt
 │
 ├── frontend/               # Next.js frontend
-│   ├── src/
-│   │   ├── app/           # App router pages
-│   │   ├── components/    # React components
-│   │   ├── lib/           # Utilities
-│   │   └── styles/        # CSS/Tailwind
-│   ├── public/
-│   └── package.json
+│   └── (To be created)
 │
 ├── ml-training/           # Model training
-│   ├── notebooks/         # Kaggle/Colab notebooks
-│   ├── scripts/           # Training scripts
-│   ├── configs/           # Training configs
-│   └── datasets/          # Dataset processing
+│   ├── notebooks/
+│   ├── scripts/
+│   └── datasets/
 │
-├── infrastructure/        # Deployment configs
-│   ├── docker/
-│   ├── kubernetes/
-│   └── terraform/
-│
-├── docs/                  # Documentation
-│   ├── api/
-│   ├── deployment/
-│   └── guides/
-│
-└── scripts/              # Utility scripts
-    ├── setup/
-    └── deploy/
+└── docs/                  # Project documentation
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.10+
-- Node.js 18+
-- Docker (optional)
+- Node.js 18+ (for frontend)
+- Docker
 - PostgreSQL 15+
-- Redis 7+
 
 ### Backend Setup
 ```bash
+# 1. Navigate to the backend directory
 cd backend
+
+# 2. Create and activate a virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 3. Install dependencies
 pip install -r requirements.txt
-cp .env.example .env  # Configure your environment
+
+# 4. Set up the database
+# (Make sure you have PostgreSQL running)
+createdb algerian_print
+
+# 5. Create a .env file from the example
+cp .env.example .env
+# (Update .env with your database URL and a strong SECRET_KEY)
+
+# 6. Run database migrations
+alembic upgrade head
+
+# 7. Run the development server
 uvicorn app.main:app --reload
 ```
-
-### Frontend Setup
-```bash
-cd frontend
-npm install
-cp .env.example .env.local  # Configure your environment
-npm run dev
-```
+The API will be available at `http://localhost:8000`.
 
 ### ML Training Setup
 ```bash
 cd ml-training
 pip install -r requirements.txt
-# Follow notebooks/README.md for Kaggle setup
+# Follow the guides in the notebooks for Kaggle setup.
 ```
-
-## 📅 Development Roadmap
-
-### Phase 1: Foundation (Weeks 1-4)
-- [x] Project setup and repository structure
-- [ ] Dataset collection and curation (10K images)
-- [ ] Initial Flux fine-tuning on Kaggle
-- [ ] Backend API structure
-- [ ] Frontend design system
-
-### Phase 2: Core Features (Weeks 5-8)
-- [ ] Design generation API
-- [ ] Product customization UI
-- [ ] Order management system
-- [ ] Payment integration (CIB, COD)
-- [ ] Local print partner integration
-
-### Phase 3: Beta Launch (Weeks 9-12)
-- [ ] User authentication and profiles
-- [ ] Design gallery and templates
-- [ ] Order tracking
-- [ ] Admin dashboard
-- [ ] Beta testing with 100 users
-
-### Phase 4: Public Launch (Weeks 13-16)
-- [ ] Marketing website
-- [ ] Production deployment
-- [ ] Analytics and monitoring
-- [ ] Customer support system
-- [ ] Public launch campaign
 
 ## 🛠️ Technology Stack
 
 ### Backend
 - **FastAPI** - Modern Python web framework
 - **SQLAlchemy** - ORM for PostgreSQL
-- **Celery** - Async task queue
-- **Redis** - Caching and sessions
+- **Alembic** - Database migrations
 - **Pydantic** - Data validation
+- **Passlib** - Password hashing
+- **python-jose** - JWT implementation
 
-### Frontend
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling with RTL support
-- **Shadcn/ui** - UI component library
-- **React Query** - Data fetching
-
-### ML/AI
-- **Flux** - Base model for image generation
-- **Diffusers** - Hugging Face library
-- **PyTorch** - Deep learning framework
-- **LoRA** - Efficient fine-tuning
-- **vLLM** - Fast inference serving
-
-### Infrastructure
-- **Docker** - Containerization
-- **PostgreSQL** - Primary database
-- **Redis** - Cache and queue
-- **MinIO** - Object storage (S3-compatible)
-- **Nginx** - Reverse proxy
-
-## 🔐 Security
-
-- JWT authentication
-- Rate limiting on all endpoints
-- Input validation and sanitization
-- HTTPS only in production
-- Secure payment handling
-- Content moderation for generated images
-
-## 🌍 Localization
-
-- Arabic-first interface (RTL support)
-- French secondary language
-- Algerian Dinar (DZD) pricing
-- Local date/time formats
-- Cultural design patterns
-
-## 📊 Key Features
-
-### For Customers
-- ✅ AI-powered design generation
-- ✅ Arabic calligraphy support
-- ✅ Cultural pattern library
-- ✅ Real-time product mockups
-- ✅ Cash on delivery
-- ✅ Fast local shipping
-
-### For Business
-- ✅ Order management dashboard
-- ✅ Inventory tracking
-- ✅ Analytics and reporting
-- ✅ Print partner integration
-- ✅ Customer communication tools
-
-## 🤝 Contributing
-
-This is a private project in active development. Team members, please follow:
-- Git flow branching strategy
-- Code review requirements
-- Testing standards
-- Documentation requirements
-
-## 📝 License
-
-Proprietary - All rights reserved
-
-## 📧 Contact
-
-For questions or support, contact the development team.
-
----
-
-**Built with ❤️ for the Algerian market**
+### And more... (Full stack details in the original README)
